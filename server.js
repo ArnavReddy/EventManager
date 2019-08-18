@@ -21,6 +21,8 @@ app.get("/login.html", function(req, res) {
     res.sendFile(__dirname + "/" + "login.html");
 });
 
+displayUsers();
+
 app.get("/process_signin", function(req, res) {
     signInemail = req.query.first_name;
     signInpass = req.query.last_name;
@@ -32,7 +34,7 @@ app.get("/process_signup", function(req, res) {
     signUppass = req.query.last_name;
 
     console.log("sign up: " + signUpemail + ", " + signUppass);
-    displayUsers();
+
     check();
 });
 
@@ -73,15 +75,15 @@ function check() {
         var query = {
             username: signUpemail
         };
+        console.log("username " + signUpemail);
         dbo.collection("Users")
             .find(query)
-            .toArray(function(err, result) {
+            .toArray(function(err, result2) {
                 if (err) throw err;
-                if (!(typeof result === "undefined")) {
-                    aae = true;
-                    if (!aae) {
-                        addAccount();
-                    }
+                console.log(JSON.stringify(result2[0]));
+            console.log(!result2[0]);
+                if (!result2[0]) {
+                    addAccount();
                 }
                 db.close();
             });
