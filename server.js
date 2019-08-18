@@ -12,6 +12,7 @@ var signUppass;
 var aae;
 var login;
 
+
 app.get("/", function(req, res) {
     res.redirect("login.html");
 });
