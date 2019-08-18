@@ -10,6 +10,8 @@ var signInpass;
 var signUpemail;
 var signUppass;
 var aae;
+var login;
+
 
 app.get("/", function(req, res) {
     res.redirect("login.html");
@@ -27,6 +29,7 @@ app.get("/process_signin", function(req, res) {
     signInemail = req.query.first_name;
     signInpass = req.query.last_name;
     console.log("sign in: " + signInemail + ", " + signInpass);
+    checkLogin();
 });
 
 app.get("/process_signup", function(req, res) {
@@ -81,10 +84,35 @@ function check() {
             .toArray(function(err, result2) {
                 if (err) throw err;
                 console.log(JSON.stringify(result2[0]));
-            console.log(!result2[0]);
+           
                 if (!result2[0]) {
                     addAccount();
                 }
+                db.close();
+            });
+    });
+}
+
+function checkLogin() {
+    MongoClient.connect(url, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("mydb");
+        var query = {
+            username: signInemail,
+            password: signInpass
+        };
+        dbo.collection("Users")
+            .find(query)
+            .toArray(function(err, result) {
+                if (err) throw err;
+                if (result[0]) {
+                    login=true;
+                    
+                }
+            else{
+                login=false;
+            }
+            console.log("login + " + login);
                 db.close();
             });
     });
