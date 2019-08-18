@@ -125,3 +125,8 @@ var server = app.listen(8081, function() {
 
     console.log("Example app listening at http://%s:%s", host, port);
 });
+
+var io = require('socket.io').listen(server);
+io.on("connection", function(socket) {
+    socket.emit('data', 1);
+});
