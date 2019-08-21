@@ -46,20 +46,14 @@
                         <a href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-fw fa-calendar"></i> MY EVENTS
                             <i class="fa fa-fw fa-angle-down pull-right"></i></a>
                         <ul id="submenu-1" class="collapse">
-                            <li>
-                                <a id="myEvents" href="#"><i class="fa fa-angle-double-right"></i>
-                                    Add events here</a>
-                            </li>
+                            
                         </ul>
                     </li>
                     <li>
                         <a href="#" data-toggle="collapse" data-target="#submenu-2"><i class="fa fa-fw fa-search"></i> FIND EVENTS
                             <i class="fa fa-fw fa-angle-down pull-right"></i></a>
                         <ul id="submenu-2" class="collapse">
-                            <li>
-                                <a id="findEvents" href="#"><i class="fa fa-angle-double-right"></i>
-                                    Add events here</a>
-                            </li>
+        
                         </ul>
                     </li>
                     <li>
@@ -90,9 +84,9 @@
                         <h1>hello world</h1>
                         <form autocomplete="off" class="form-signin" action="/process_addEvent" method="GET">
                     <h2>Add event</h2>
-                    <input required="required" type="text" placeholder="Event Name" name="event_name" />
+                    <input maxlength = "17" required="required" type="text" placeholder="Event Name" name="event_name" />
                     <input required="required" type="text" placeholder="Event Description" name="event_desc" />
-                    <input type="submit" value="Add Event" />
+                    <input onclick = 'updateList()' type="submit" value="Add Event" />
                 </form>
                         <b
                     </div>
@@ -130,16 +124,24 @@
         
             
             var socket = io.connect();
-            socket.emit('display', "1");   
+            socket.emit('display', "1");  
+            
   socket.on('username', function (username) {
         document.getElementById("username").innerHTML =username;
   });
   socket.on('allevents', function(allevents) {
-      document.getElementById("submenu-2").innerHTML =allevents;
+      for(i=0; i<allevents.length;i++){
+          allevents[i] = allevents[i].replace(/^"(.*)"$/, '$1');
+      $('#submenu-2').append("<li><a id='allEvents' href='#'><i class='fa fa-fw fa-search'></i>" + allevents[i] + "</a></li>");
+      }
   })
 
   socket.on('myevents', function(myevents) {
-      document.getElementById("submenu-1").innerHTML =myevents;
+      for(i=0; i<myevents.length;i++){
+          myevents[i] = myevents[i].replace(/^"(.*)"$/, '$1');
+      $('#submenu-1').append("<li><a id='myEvents' href='#'><i class='fa fa-fw fa-calendar'></i>" + myevents[i] + "</a></li>");
+      
+      }
   })
 
 
