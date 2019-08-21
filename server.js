@@ -5,14 +5,9 @@ var fs = require("fs");
 var mongo = require("mongodb");
 var MongoClient = require("mongodb").MongoClient;
 var url = "mongodb://localhost:27017/";
-var signInemail;
-var signInpass;
-var signUpemail;
-var signUppass;
-var aae;
-var login;
-var eventName;
-var eventDesc;
+var signInemail, signInpass, signUpemail, signUppass, login, eventName, eventDesc;
+var allEvents = [];
+var myEvents = [];
 
 
 app.get("/", function(req, res) {
@@ -119,8 +114,10 @@ app.get("/process_signup", function(req, res) {
                     db.close();
                 });
         });
+
     }
 });
+
 
 
 app.get("/process_addEvent", function(req, res) {
@@ -135,11 +132,27 @@ app.get("/process_addEvent", function(req, res) {
             eventdescription: eventDesc,
             username: signInemail
         };
-        dbo.collection("Events").insertOne(myobj, function(err, res) {
-            if (err) throw err;
-            console.log("1 document inserted");
-            db.close();
-        });
+
+        var query = {
+            username: signInemail,
+            eventname: eventName
+
+        };
+
+        dbo.collection("Events")
+            .find(query)
+            .toArray(function(err, result2) {
+                if (err) throw err;
+
+                if (!result2[0]) {
+                    dbo.collection("Events").insertOne(myobj, function(err, res) {
+                        if (err) throw err;
+                        console.log("1 document inserted");
+                        db.close();
+                    });
+                }
+                db.close();
+            });
     });
 
 });
@@ -155,6 +168,64 @@ var server = app.listen(8081, function() {
 var io = require('socket.io')(server);
 io.on('connection', function(socket) {
     socket.emit('username', signInemail);
+
+    socket.on('display', function(username) {
+        MongoClient.connect(url, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("mydb");
+            dbo.collection("Events")
+                .find({})
+                .toArray(function(err, result) {
+                    if (err) throw err;
+                    for (var i = 0; i < result.length; i++) {
+
+                        allEvents[i] = JSON.stringify(result[i].eventname);
+                        //console.log(JSON.stringify(result[i].eventname));
+
+
+
+                    }
+
+                    //console.log("All events: " + JSON.stringify(allEvents));
+                    socket.emit('allevents', allEvents);
+
+                    db.close();
+                });
+
+
+        });
+
+        MongoClient.connect(url, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("mydb");
+
+            var query = {
+                username: signInemail
+
+            };
+
+            dbo.collection("Events")
+                .find(query)
+                .toArray(function(err, result2) {
+                    if (err) throw err;
+                    for (var i = 0; i < result2.length; i++) {
+
+                        myEvents[i] = JSON.stringify(result2[i].eventname);
+                        //console.log(JSON.stringify(result[i].eventname));
+
+
+
+                    }
+
+                    //console.log("All events: " + JSON.stringify(allEvents));
+                    socket.emit('myevents', myEvents);
+
+                    db.close();
+                });
+
+        });
+    });
+
 
 
 })

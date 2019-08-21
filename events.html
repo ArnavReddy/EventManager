@@ -105,7 +105,7 @@
     </div>
     <!-- /#wrapper -->
     <script>
-                
+             
   
         $(function() {
             $('[data-toggle="tooltip"]').tooltip();
@@ -130,9 +130,19 @@
         
             
             var socket = io.connect();
+            socket.emit('display', "1");   
   socket.on('username', function (username) {
         document.getElementById("username").innerHTML =username;
   });
+  socket.on('allevents', function(allevents) {
+      document.getElementById("submenu-2").innerHTML =allevents;
+  })
+
+  socket.on('myevents', function(myevents) {
+      document.getElementById("submenu-1").innerHTML =myevents;
+  })
+
+
    if (performance.navigation.type == 1) {
     console.log( "This page is reloaded" );
     window.location.href="login.html";
