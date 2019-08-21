@@ -11,6 +11,8 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+     <script src="/socket.io/socket.io.js"></script>
+     <script src="https://cdnjs.com/libraries/socket.io" ></script>
     <link rel="stylesheet" href="eventstyles.css" />
 </head>
 
@@ -32,7 +34,8 @@
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
                 <li>
-                    <a onclick = 'func()' href="#" id="username">Place username <b class="fa fa-fw fa-user"></b></a>
+                    <a  href="#" id="username"> <b class="fa fa-fw fa-user"></b></a>
+                    
                     <ul class="dropdown-menu"></ul>
                 </li>
             </ul>
@@ -95,7 +98,8 @@
     </div>
     <!-- /#wrapper -->
     <script>
-        var socket = io.connect();
+                
+  
         $(function() {
             $('[data-toggle="tooltip"]').tooltip();
             $(".side-nav .collapse").on("hide.bs.collapse", function() {
@@ -116,11 +120,19 @@
             });
         });
 
-        function func() {
-            socket.on('data', function(int) {
-                console.log("on data " + int);
-            });
-        }
+        
+            
+            var socket = io.connect();
+  socket.on('username', function (username) {
+        document.getElementById("username").innerHTML =username;
+  });
+   if (performance.navigation.type == 1) {
+    console.log( "This page is reloaded" );
+    window.location.href="login.html";
+  } else {
+    console.log( "This page is not reloaded");
+  }
+        
 
     </script>
 </body>

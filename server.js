@@ -105,6 +105,7 @@ app.get("/process_signup", function(req, res) {
         });
         displayUsers();
     }
+
     function displayUsers() {
         MongoClient.connect(url, function(err, db) {
             if (err) throw err;
@@ -126,7 +127,9 @@ var server = app.listen(8081, function() {
     console.log("Example app listening at http://%s:%s", host, port);
 });
 
-var io = require('socket.io').listen(server);
-io.on("connection", function(socket) {
-    socket.emit('data', 1);
-});
+var io = require('socket.io')(server);
+io.on('connection', function(socket) {
+    socket.emit('username', signInemail);
+
+
+})
