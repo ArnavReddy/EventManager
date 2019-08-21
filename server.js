@@ -11,6 +11,8 @@ var signUpemail;
 var signUppass;
 var aae;
 var login;
+var eventName;
+var eventDesc;
 
 
 app.get("/", function(req, res) {
@@ -119,6 +121,29 @@ app.get("/process_signup", function(req, res) {
         });
     }
 });
+
+
+app.get("/process_addEvent", function(req, res) {
+    eventName = req.query.event_name;
+    eventDesc = req.query.event_desc;
+
+    MongoClient.connect(url, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("mydb");
+        var myobj = {
+            eventname: eventName,
+            eventdescription: eventDesc,
+            username: signInemail
+        };
+        dbo.collection("Events").insertOne(myobj, function(err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+            db.close();
+        });
+    });
+
+});
+
 
 var server = app.listen(8081, function() {
     var host = server.address().address;
