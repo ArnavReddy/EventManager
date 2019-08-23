@@ -139,7 +139,7 @@
   socket.on('myevents', function(myevents) {
       for(i=0; i<myevents.length;i++){
           myevents[i] = myevents[i].replace(/^"(.*)"$/, '$1');
-      $('#submenu-1').append("<li><a id='myEvents' href='#'><i class='fa fa-fw fa-calendar'></i>" + myevents[i] + "</a></li>");
+        $('#submenu-1').append("<li><a id='myEvents' href='#'><i class='fa fa-fw fa-calendar'></i>" + myevents[i] + "</a></li>");
       
       }
   })
