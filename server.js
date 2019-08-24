@@ -152,7 +152,7 @@ app.get("/process_addEvent", function(req, res) {
                 if (!result2[0]) {
                     dbo.collection("Events").insertOne(myobj, function(err, res) {
                         if (err) throw err;
-                        console.log("1 document inserted");
+                        console.log(myobj);
                         db.close();
                     });
                 }
@@ -186,7 +186,7 @@ io.on('connection', function(socket) {
                     for (var i = 0; i < result.length; i++) {
                          
                         console.log(result[i].username + " " + socket.name); 
-                        if(result[i].username != socket.name && result[i].username != null) allEvents[i] = JSON.stringify(result[i].eventname);
+                        if(result[i].username != socket.name && result[i].username != null) allEvents[i] = result[i];
                         //console.log(JSON.stringify(result[i].eventname));
 
 
@@ -217,7 +217,7 @@ io.on('connection', function(socket) {
                     if (err) throw err;
                     for (var i = 0; i < result2.length; i++) {
 
-                        myEvents[i] = JSON.stringify(result2[i].eventname);
+                        myEvents[i] = result2[i];
                         //console.log(JSON.stringify(result[i].eventname));
 
 
