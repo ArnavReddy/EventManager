@@ -124,7 +124,8 @@ app.get("/process_addEvent", function(req, res) {
     eventName = req.query.event_name;
     eventDesc = req.query.event_desc;
     eventDate = req.query.event_date;
-    eventPriv = req.query.event_privacy;
+    if (req.query.event_privacy === "on") eventPriv = "private"
+    else eventPriv = "public"
 
     MongoClient.connect(url, function(err, db) {
         if (err) throw err;
@@ -135,7 +136,6 @@ app.get("/process_addEvent", function(req, res) {
             username: signInemail,
             eventdate: eventDate,
             eventprivacy: eventPriv
-
         };
 
         var query = {
