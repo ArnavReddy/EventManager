@@ -86,6 +86,8 @@
                             <h2>Add event</h2>
                             <input maxlength = "17" required="required" type="text" placeholder="Event Name" name="event_name" />
                             <input required="required" type="text" placeholder="Event Description" name="event_desc" />
+                            <input required="required" id="test" placeholder = "Event Date(2019-12-31 )" name ="event_date" type="date">
+                            Event Private <input type = "checkbox" placeholder ="public" name = "event_privacy">
                             <input onclick = 'updateList()' type="submit" value="Add Event" />
                         </form>
                         
@@ -99,7 +101,7 @@
     </div>
     <!-- /#wrapper -->
     <script>
-             
+             if ( $('#test')[0].type != 'date' ) $('#test').datepicker();
         var events = {}; 
         var count = 0; 
         $(function() {
