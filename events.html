@@ -95,6 +95,10 @@
                         <h1 id="title">default</h1>
                         <h2 id ="info">default</h2>
                         <p id="descrip">default</p>
+                        <form autocomplete="off" action="/addFriends" method ="GET">
+                            <input type = "email" placeholder="friend@email.com" name="addFriend" />
+                            <input type="submit" value ="Add Friend"/>
+                        </form>
                     </div>
                 </div>
                 <!-- /.row -->
@@ -150,7 +154,7 @@
           //myevents[i] = myevents[i].replace(/^"(.*)"$/, '$1');
           events[count] = myevents[i]; 
 
-        $('#submenu-1').append("<li onclick = 'showEvent(" + count +")'><a><i class='fa fa-fw fa-calendar' color = 'white'></i>" + myevents[i].eventname + "</a></li>");
+        $('#submenu-1').append("<li onclick = 'showEventM(" + count +")'><a><i class='fa fa-fw fa-calendar' color = 'white'></i>" + myevents[i].eventname + "</a></li>");
         count++; 
       }
   })
@@ -163,6 +167,17 @@
     document.getElementById("title").innerHTML = events[index].eventname; 
     document.getElementById("descrip").innerHTML = events[index].eventdescription;
     document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
+  }
+
+  function showEventM(index){
+    document.getElementById("content").style.display ="none"; 
+    document.getElementById("event").style.display = "block";
+    console.log(events[index]); 
+    console.log(events[index]["eventname"]);
+    document.getElementById("title").innerHTML = events[index].eventname; 
+    document.getElementById("descrip").innerHTML = events[index].eventdescription;
+    document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
+
   }
 
   function addEvent(){

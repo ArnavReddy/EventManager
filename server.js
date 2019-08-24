@@ -150,15 +150,17 @@ app.get("/process_addEvent", function(req, res) {
                 if (err) throw err;
 
                 if (!result2[0]) {
-                    dbo.collection("Events").insertOne(myobj, function(err, res) {
+                    dbo.collection("Events").insertOne(myobj, function(err, r) {
                         if (err) throw err;
                         console.log(myobj);
+                        res.redirect("/events.html"); 
                         db.close();
                     });
                 }
                 db.close();
             });
     });
+
 
 });
 
