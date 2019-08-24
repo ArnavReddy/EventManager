@@ -136,7 +136,7 @@
       for(i=0; i<allevents.length;i++){
           allevents[i] = allevents[i].replace(/^"(.*)"$/, '$1');
           events[count] = allevents[i];
-      $('#submenu-2').append("<li  onclick = 'showEvent(" + count +")'><a><i class='fa fa-fw fa-search'>"+ allevents[i] +"</i></a></li>");
+      $('#submenu-2').append("<li  onclick = 'showEvent(" + count +")'><a><i class='fa fa-fw fa-search' color='white'>"+ allevents[i] +"</i></a></li>");
         count++; 
     }
   })
@@ -146,7 +146,7 @@
           myevents[i] = myevents[i].replace(/^"(.*)"$/, '$1');
           events[count] = myevents[i]; 
 
-        $('#submenu-1').append("<li onclick = 'showEvent(" + count +")'><a><i class='fa fa-fw fa-calendar'></i>" + myevents[i] + "</a></li>");
+        $('#submenu-1').append("<li onclick = 'showEvent(" + count +")'><a><i class='fa fa-fw fa-calendar' color = 'white'></i>" + myevents[i] + "</a></li>");
         count++; 
       }
   })

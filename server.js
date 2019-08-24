@@ -173,6 +173,7 @@ var server = app.listen(8081, function() {
 var io = require('socket.io')(server);
 io.on('connection', function(socket) {
     socket.emit('username', signInemail);
+    socket.name = signInemail; 
 
     socket.on('display', function(username) {
         MongoClient.connect(url, function(err, db) {
@@ -183,8 +184,9 @@ io.on('connection', function(socket) {
                 .toArray(function(err, result) {
                     if (err) throw err;
                     for (var i = 0; i < result.length; i++) {
-
-                        allEvents[i] = JSON.stringify(result[i].eventname);
+                         
+                        console.log(result[i].username + " " + socket.name); 
+                        if(result[i].username != socket.name && result[i].username != null) allEvents[i] = JSON.stringify(result[i].eventname);
                         //console.log(JSON.stringify(result[i].eventname));
 
 
