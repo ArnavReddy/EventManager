@@ -4,10 +4,19 @@ var path = require("path");
 var fs = require("fs");
 var mongo = require("mongodb");
 var MongoClient = require("mongodb").MongoClient;
+var nodemailer = require('nodemailer');
 var url = "mongodb://localhost:27017/";
 var signInemail, signInpass, signUpemail, signUppass, login, eventName, eventDesc, eventDate, eventPriv;
 var allEvents = [];
 var myEvents = [];
+
+var transport = nodemailer.createTransport({
+    service: 'gmail', 
+    auth: {
+        user: 'handlerevent394@gmail.com',
+        pass: 'Joshismegagay1'
+    }
+});
 
 
 app.get("/", function(req, res) {
@@ -118,7 +127,24 @@ app.get("/process_signup", function(req, res) {
     }
 });
 
+app.get("/addFriends", function(req, res){
+    var email = req.query.friend_email; 
+    var mailOp = {
+        from: 'handlerevent394@gmail.com',
+        to: email, 
+        subject: 'Invited to Event!',
+        text: 'hey there'
+    };
 
+    transport.sendMail(mailOp, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+      res.redirect('/events.html'); 
+});
 
 app.get("/process_addEvent", function(req, res) {
     eventName = req.query.event_name;
