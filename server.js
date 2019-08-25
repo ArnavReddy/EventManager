@@ -61,6 +61,7 @@ app.get("/process_signin", function(req, res) {
                         login = false;
                     }
                     console.log("login + " + login);
+                    res.redirect("/events.html"); 
                     db.close();
                 });
         });
@@ -259,8 +260,10 @@ io.on('connection', function(socket) {
         var mailOp = {
             from: 'handlerevent394@gmail.com',
             to: email,
-            subject: 'Invited to Event!',
-            text: 'hey there'
+            subject: 'Invited to '+ curEventName + ' hosted by ' + socket.name,
+            text: 'Hey there! You have been graciously invited to ' + curEventName + ' by ' + socket.name +' . It is'
+                + ' '+ curEventDesc + ' and it is being held on ' + curEventDate+ '. You see more details at localhost:8081/login.html .'
+
         };
 
         transport.sendMail(mailOp, function(error, info) {
