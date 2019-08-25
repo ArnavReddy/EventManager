@@ -6,12 +6,14 @@ var mongo = require("mongodb");
 var MongoClient = require("mongodb").MongoClient;
 var nodemailer = require('nodemailer');
 var url = "mongodb://localhost:27017/";
-var signInemail, signInpass, signUpemail, signUppass, login, eventName, eventDesc, eventDate, eventPriv;
+var signInemail, signInpass, signUpemail, signUppass, login;
+var eventName, eventDesc, eventDate, eventPriv;
+var curEventName, curEventDesc, curEventDate;
 var allEvents = [];
 var myEvents = [];
 
 var transport = nodemailer.createTransport({
-    service: 'gmail', 
+    service: 'gmail',
     auth: {
         user: 'handlerevent394@gmail.com',
         pass: 'Joshismegagay1'
@@ -127,25 +129,6 @@ app.get("/process_signup", function(req, res) {
     }
 });
 
-app.get("/addFriends", function(req, res){
-    var email = req.query.friend_email; 
-    var mailOp = {
-        from: 'handlerevent394@gmail.com',
-        to: email, 
-        subject: 'Invited to Event!',
-        text: 'hey there'
-    };
-
-    transport.sendMail(mailOp, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
-      res.redirect('/events.html'); 
-});
-
 app.get("/process_addEvent", function(req, res) {
     eventName = req.query.event_name;
     eventDesc = req.query.event_desc;
@@ -179,7 +162,7 @@ app.get("/process_addEvent", function(req, res) {
                     dbo.collection("Events").insertOne(myobj, function(err, r) {
                         if (err) throw err;
                         console.log(myobj);
-                        res.redirect("/events.html"); 
+                        res.redirect("/events.html");
                         db.close();
                     });
                 }
@@ -201,7 +184,17 @@ var server = app.listen(8081, function() {
 var io = require('socket.io')(server);
 io.on('connection', function(socket) {
     socket.emit('username', signInemail);
-    socket.name = signInemail; 
+    socket.name = signInemail;
+    socket.on('curEventDate', function(curEventDate1) {
+        console.log("has reached")
+        curEventDate = curEventDate1;
+    })
+    socket.on('curEventName', function(curEventName1) {
+        curEventName = curEventName1;
+    })
+    socket.on('curEventDesc', function(curEventDesc1) {
+        curEventDesc = curEventDesc1;
+    })
 
     socket.on('display', function(username) {
         MongoClient.connect(url, function(err, db) {
@@ -212,9 +205,9 @@ io.on('connection', function(socket) {
                 .toArray(function(err, result) {
                     if (err) throw err;
                     for (var i = 0; i < result.length; i++) {
-                         
-                        console.log(result[i].username + " " + socket.name); 
-                        if(result[i].username != socket.name && result[i].username != null) allEvents[i] = result[i];
+
+                        console.log(result[i].username + " " + socket.name);
+                        if (result[i].username != socket.name && result[i].username != null) allEvents[i] = result[i];
                         //console.log(JSON.stringify(result[i].eventname));
 
 
@@ -261,6 +254,68 @@ io.on('connection', function(socket) {
         });
     });
 
+    app.get("/addFriends", function(req, res) {
+        var email = req.query.friend_email;
+        var mailOp = {
+            from: 'handlerevent394@gmail.com',
+            to: email,
+            subject: 'Invited to Event!',
+            text: 'hey there'
+        };
 
+        transport.sendMail(mailOp, function(error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+        res.redirect('/events.html');
+
+
+
+        check();
+
+        function check() {
+            MongoClient.connect(url, function(err, db) {
+                if (err) throw err;
+                var dbo = db.db("mydb");
+                var query = {
+                    recipient: email
+                };
+                dbo.collection("Invites")
+                    .find(query)
+                    .toArray(function(err, result2) {
+                        if (err) throw err;
+                        console.log(JSON.stringify(result2[0]));
+
+                        if (!result2[0]) {
+                            addFriend();
+                        }
+                        db.close();
+                    });
+            });
+        }
+
+        function addFriend() {
+            MongoClient.connect(url, function(err, db) {
+                if (err) throw err;
+                var dbo = db.db("mydb");
+                var myobj = {
+                    recipient: email,
+                    sender: signInemail,
+                    eventname: curEventName,
+                    eventdate: curEventDate,
+                    eventdesc: curEventDesc
+                };
+                dbo.collection("Invites").insertOne(myobj, function(err, res) {
+                    if (err) throw err;
+                    console.log("1 document inserted");
+                    db.close();
+                });
+            });
+        }
+
+    });
 
 })

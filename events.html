@@ -112,6 +112,7 @@
              if ( $('#test')[0].type != 'date' ) $('#test').datepicker();
         var events = {}; 
         var count = 0; 
+        var curEventName, curEventDesc, curEventDate;
         $(function() {
            
             $(".side-nav .collapse").on("hide.bs.collapse", function() {
@@ -175,9 +176,14 @@
     console.log(events[index]); 
     console.log(events[index]["eventname"]);
     document.getElementById("title").innerHTML = events[index].eventname; 
+    curEventName = events[index].eventname; 
     document.getElementById("descrip").innerHTML = events[index].eventdescription;
+    curEventDesc = events[index].eventdescription; 
     document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
-
+    curEventDate = events[index].eventdate; 
+    socket.emit('curEventName', curEventName); 
+    socket.emit('curEventDesc', curEventDesc); 
+    socket.emit('curEventDate', curEventDate); 
   }
 
   function addEvent(){
