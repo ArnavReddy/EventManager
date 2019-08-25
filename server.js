@@ -282,7 +282,8 @@ io.on('connection', function(socket) {
                 var dbo = db.db("mydb");
                 var query = {
                     recipient: email,
-                    sender: signInemail
+                    sender: signInemail,
+                    eventname: curEventName
                 };
                 dbo.collection("Invites")
                     .find(query)
