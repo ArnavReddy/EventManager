@@ -31,6 +31,7 @@ app.get("/login.html", function(req, res) {
     res.sendFile(__dirname + "/" + "login.html");
 });
 app.get("/events.html", function(req, res) {
+    console.log("ALALALLALALALLALA")
     res.sendFile(__dirname + "/" + "events.html");
 });
 
@@ -61,7 +62,7 @@ app.get("/process_signin", function(req, res) {
                         login = false;
                     }
                     console.log("login + " + login);
-                    res.redirect("/events.html"); 
+                    //res.redirect("/events.html");
                     db.close();
                 });
         });
@@ -175,6 +176,44 @@ app.get("/process_addEvent", function(req, res) {
 });
 
 
+
+app.get("/process_deleteEvent", function(req, res) {
+    var deletedEvent = req.query.deletedEvent;
+
+    MongoClient.connect(url, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("mydb");
+
+        var query = {
+            username: signInemail,
+            eventname: deletedEvent
+        };
+
+        dbo.collection("Events")
+            .find(query)
+            .toArray(function(err, result2) {
+                if (err) throw err;
+
+                if (!result2[0]) {
+
+                } else {
+                    console.log("event exists")
+                    var myquery = { eventname: deletedEvent };
+                    dbo.collection("Events").deleteOne(myquery, function(err, obj) {
+                        if (err) throw err;
+                        console.log("1 document deleted");
+
+                    });
+                }
+                res.redirect("events.html");
+                db.close();
+            });
+    });
+
+
+});
+
+
 var server = app.listen(8081, function() {
     var host = server.address().address;
     var port = server.address().port;
@@ -260,9 +299,9 @@ io.on('connection', function(socket) {
         var mailOp = {
             from: 'handlerevent394@gmail.com',
             to: email,
-            subject: 'Invited to '+ curEventName + ' hosted by ' + socket.name,
-            text: 'Hey there! You have been graciously invited to ' + curEventName + ' by ' + socket.name +' . It is'
-                + ' '+ curEventDesc + ' and it is being held on ' + curEventDate+ '. You see more details at localhost:8081/login.html .'
+            subject: 'Invited to ' + curEventName + ' hosted by ' + socket.name,
+            text: 'Hey there! You have been graciously invited to ' + curEventName + ' by ' + socket.name + ' . It is' +
+                ' ' + curEventDesc + ' and it is being held on ' + curEventDate + '. You see more details at localhost:8081/login.html .'
 
         };
 
