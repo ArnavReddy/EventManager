@@ -31,7 +31,7 @@ app.get("/login.html", function(req, res) {
     res.sendFile(__dirname + "/" + "login.html");
 });
 app.get("/events.html", function(req, res) {
-    console.log("ALALALLALALALLALA")
+
     res.sendFile(__dirname + "/" + "events.html");
 });
 
@@ -40,7 +40,6 @@ app.get("/events.html", function(req, res) {
 app.get("/process_signin", function(req, res) {
     signInemail = req.query.first_name;
     signInpass = req.query.last_name;
-    console.log("sign in: " + signInemail + ", " + signInpass);
     checkLogin();
 
     function checkLogin() {
@@ -61,7 +60,6 @@ app.get("/process_signin", function(req, res) {
                     } else {
                         login = false;
                     }
-                    console.log("login + " + login);
                     //res.redirect("/events.html");
                     db.close();
                 });
@@ -73,7 +71,6 @@ app.get("/process_signup", function(req, res) {
     signUpemail = req.query.first_name;
     signUppass = req.query.last_name;
 
-    console.log("sign up: " + signUpemail + ", " + signUppass);
 
     check();
 
@@ -84,12 +81,10 @@ app.get("/process_signup", function(req, res) {
             var query = {
                 username: signUpemail
             };
-            console.log("username " + signUpemail);
             dbo.collection("Users")
                 .find(query)
                 .toArray(function(err, result2) {
                     if (err) throw err;
-                    console.log(JSON.stringify(result2[0]));
 
                     if (!result2[0]) {
                         addAccount();
@@ -109,7 +104,6 @@ app.get("/process_signup", function(req, res) {
             };
             dbo.collection("Users").insertOne(myobj, function(err, res) {
                 if (err) throw err;
-                console.log("1 document inserted");
                 db.close();
             });
         });
@@ -163,49 +157,10 @@ app.get("/process_addEvent", function(req, res) {
                 if (!result2[0]) {
                     dbo.collection("Events").insertOne(myobj, function(err, r) {
                         if (err) throw err;
-                        console.log(myobj);
                         res.redirect("/events.html");
                         db.close();
                     });
                 }
-                db.close();
-            });
-    });
-
-
-});
-
-
-
-app.get("/process_deleteEvent", function(req, res) {
-    var deletedEvent = req.query.deletedEvent;
-
-    MongoClient.connect(url, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("mydb");
-
-        var query = {
-            username: signInemail,
-            eventname: deletedEvent
-        };
-
-        dbo.collection("Events")
-            .find(query)
-            .toArray(function(err, result2) {
-                if (err) throw err;
-
-                if (!result2[0]) {
-
-                } else {
-                    console.log("event exists")
-                    var myquery = { eventname: deletedEvent };
-                    dbo.collection("Events").deleteOne(myquery, function(err, obj) {
-                        if (err) throw err;
-                        console.log("1 document deleted");
-
-                    });
-                }
-                res.redirect("events.html");
                 db.close();
             });
     });
@@ -226,7 +181,6 @@ io.on('connection', function(socket) {
     socket.emit('username', signInemail);
     socket.name = signInemail;
     socket.on('curEventDate', function(curEventDate1) {
-        console.log("has reached")
         curEventDate = curEventDate1;
     })
     socket.on('curEventName', function(curEventName1) {
@@ -246,15 +200,12 @@ io.on('connection', function(socket) {
                     if (err) throw err;
                     for (var i = 0; i < result.length; i++) {
 
-                        console.log(result[i].username + " " + socket.name);
                         if (result[i].username != socket.name && result[i].username != null) allEvents[i] = result[i];
-                        //console.log(JSON.stringify(result[i].eventname));
 
 
 
                     }
 
-                    //console.log("All events: " + JSON.stringify(allEvents));
                     socket.emit('allevents', allEvents);
 
                     db.close();
@@ -279,19 +230,54 @@ io.on('connection', function(socket) {
                     for (var i = 0; i < result2.length; i++) {
 
                         myEvents[i] = result2[i];
-                        //console.log(JSON.stringify(result[i].eventname));
 
 
 
                     }
 
-                    //console.log("All events: " + JSON.stringify(allEvents));
                     socket.emit('myevents', myEvents);
 
                     db.close();
                 });
 
         });
+    });
+
+
+    app.get("/process_deleteEvent", function(req, res) {
+        var deletedEvent = req.query.deletedEvent;
+        console.log("DELETE: " + deletedEvent)
+        MongoClient.connect(url, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("mydb");
+
+            var query = {
+                username: signInemail,
+                eventname: deletedEvent
+            };
+
+            dbo.collection("Events")
+                .find(query)
+                .toArray(function(err, result2) {
+                    if (err) throw err;
+
+                    if (!result2[0]) {
+
+                    } else {
+                        var myquery = { eventname: deletedEvent };
+                        dbo.collection("Events").deleteOne(myquery, function(err, obj) {
+                            if (err) throw err;
+                            console.log("deleted event : " + myquery)
+                            res.redirect("/events.html");
+                            db.close();
+                        });
+                    }
+
+                    db.close();
+                });
+        });
+
+
     });
 
     app.get("/addFriends", function(req, res) {
@@ -306,11 +292,7 @@ io.on('connection', function(socket) {
         };
 
         transport.sendMail(mailOp, function(error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email sent: ' + info.response);
-            }
+            if (error) {} else {}
         });
         res.redirect('/events.html');
 
@@ -331,7 +313,6 @@ io.on('connection', function(socket) {
                     .find(query)
                     .toArray(function(err, result2) {
                         if (err) throw err;
-                        console.log(JSON.stringify(result2[0]));
 
                         if (!result2[0]) {
                             addFriend();
@@ -354,7 +335,6 @@ io.on('connection', function(socket) {
                 };
                 dbo.collection("Invites").insertOne(myobj, function(err, res) {
                     if (err) throw err;
-                    console.log("1 document inserted");
                     db.close();
                 });
             });

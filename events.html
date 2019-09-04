@@ -64,7 +64,8 @@
                                 <a onclick ="addEvent()"id="eventInvites" href="#"><i class="fa fa-angle-double-right"></i>
                                     CREATE EVENTS</a>
 
-                                 <a onclick ="deleteEvent()" id="eventInvites" href="#"><i class="fa fa-angle-double-right"></i>
+                                 <a onclick ="var x = document.getElementById("deletionEventOptions");
+        x.remove(x.selectedIndex); window.location.href = 'events.html'" id="eventInvites" href="#"><i class="fa fa-angle-double-right"></i>
                                     DELETE EVENTS</a>
                             </li>
                         </ul>
@@ -97,12 +98,8 @@
    <div class="col-sm-12 col-md-12 well" id="deletion">
                         <form autocomplete="off" class="form-signin" action="/process_deleteEvent" method="GET">
                             <h2>Delete event</h2>
-                            <input  name = "deletedEvent" list="deletionEventOptions">
-
-                            <datalist id="deletionEventOptions">
-                            
-
-                            </datalist>
+                            <select name = "deletedEvent" id = "deletionEventOptions"> 
+                            </select>
                             
                             <input onclick = 'updateList()' type="submit" value="Delete Event" />
                         </form>
@@ -172,13 +169,21 @@
   })
 
   socket.on('myevents', function(myevents) {
+
+      if(myevents.length ===0)
+      {
+          document.getElementById("deletionEventOptions").placeholder = "None";
+      }
+      else{
+          document.getElementById("deletionEventOptions").placeholder = "Select";
+      }
       for(i=0; i<myevents.length;i++){
           //myevents[i] = myevents[i].replace(/^"(.*)"$/, '$1');
           events[count] = myevents[i]; 
 
         $('#submenu-1').append("<li onclick = 'showEventM(" + count +")'><a><i class='fa fa-fw fa-calendar' color = 'white'></i>" + myevents[i].eventname + "</a></li>");
         count++; 
-        $('#deletionEventOptions').append("<option><a><i class='fa fa-fw fa-search' color='white'>"+ myevents[i].eventname +"</i></a></option>");
+        $('#deletionEventOptions').append("<option value = '" + myevents[i].eventname +"'>"+ myevents[i].eventname +"</option>");
 
       }
   })
@@ -186,8 +191,7 @@
   function showEvent(index){
     document.getElementById("content").style.display ="none"; 
     document.getElementById("event").style.display = "block";
-    console.log(events[index]); 
-    console.log(events[index]["eventname"]);
+
     document.getElementById("title").innerHTML = events[index].eventname; 
     document.getElementById("descrip").innerHTML = events[index].eventdescription;
     document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
@@ -197,8 +201,7 @@
     document.getElementById("content").style.display ="none"; 
     document.getElementById("event").style.display = "block";
      document.getElementById("deletion").style.display = "none";
-    console.log(events[index]); 
-    console.log(events[index]["eventname"]);
+     
     document.getElementById("title").innerHTML = events[index].eventname; 
     curEventName = events[index].eventname; 
     document.getElementById("descrip").innerHTML = events[index].eventdescription;
@@ -232,7 +235,9 @@
   }
 
     function updateList(){
-
+        var x = document.getElementById("deletionEventOptions");
+        x.remove(x.selectedIndex);
+        //alert("hello");
     }
 
 
