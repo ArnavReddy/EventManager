@@ -262,12 +262,15 @@ io.on('connection', function(socket) {
                     if (err) throw err;
 
                     if (!result2[0]) {
+                        db.close();
+                        res.redirect("/events.html")
 
                     } else {
                         var myquery = { eventname: deletedEvent };
                         dbo.collection("Events").deleteOne(myquery, function(err, obj) {
                             if (err) throw err;
-                            console.log("deleted event : " + myquery)
+                            console.log("deleted event : " + JSON.stringify(obj))
+                            socket.emit('updateSelectList', obj);
                             res.redirect("/events.html");
                             db.close();
                         });

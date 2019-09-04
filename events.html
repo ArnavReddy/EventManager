@@ -64,7 +64,7 @@
                                 <a onclick ="addEvent()"id="eventInvites" href="#"><i class="fa fa-angle-double-right"></i>
                                     CREATE EVENTS</a>
 
-                                 <a onclick ="var x = document.getElementById("deletionEventOptions");
+                                 <a onclick ="var x = document.getElementById('deletionEventOptions');
         x.remove(x.selectedIndex); window.location.href = 'events.html'" id="eventInvites" href="#"><i class="fa fa-angle-double-right"></i>
                                     DELETE EVENTS</a>
                             </li>
@@ -101,7 +101,7 @@
                             <select name = "deletedEvent" id = "deletionEventOptions"> 
                             </select>
                             
-                            <input onclick = 'updateList()' type="submit" value="Delete Event" />
+                            <input type="submit" value="Delete Event" />
                         </form>
                         
                     </div>
@@ -233,12 +233,17 @@
   } else {
     console.log( "This page is not reloaded");
   }
-
-    function updateList(){
-        var x = document.getElementById("deletionEventOptions");
+socket.on('updateSelectList', function(obj){
+    console.log("YOLOOLOLLOO " + obj)
+     var x = document.getElementById("deletionEventOptions");
         x.remove(x.selectedIndex);
-        //alert("hello");
-    }
+        alert("changed")
+        alert("hello");
+})
+function updateList()
+{
+
+}
 
 
         
