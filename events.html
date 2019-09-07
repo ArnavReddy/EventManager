@@ -111,10 +111,26 @@
                         <h1 id="title">default</h1>
                         <h2 id ="info">default</h2>
                         <p id="descrip">default</p>
+                        <p id="privacy">default</p>
+
+                        <div id ="rtj">
+                         <form autocomplete="on" action="/requestToJoinEvent" method ="GET">
+                         <input type = "button" value = "Request To Join Event">
+                         <form>
+                         </div>
+
+                        <div id ="joinEvent">
+                         <form autocomplete="on" action="/joinEvent" method ="GET">
+                          <input type = "button" value = "Join Event">
+                         <form>
+                         </div>
+                        
+                        <div id ="addFriendsEmail">
                         <form autocomplete="on" action="/addFriends" method ="GET">
                             <input id = "testerrr" type = "email" placeholder="friend@email.com" name="friend_email" />
                             <input type="submit" value ="Add Friend"/>
                         </form>
+                        </div>
                     </div>
                 </div>
                 <!-- /.row -->
@@ -191,16 +207,31 @@
   function showEvent(index){
     document.getElementById("content").style.display ="none"; 
     document.getElementById("event").style.display = "block";
+    document.getElementById("addFriendsEmail").style.display = "none";
+    if(events[index].eventprivacy === "public") {
+         document.getElementById("rtj").style.display = "none";
+          document.getElementById("joinEvent").style.display = "block";
+    }
+    if(events[index].eventprivacy === "private") {
+        document.getElementById("rtj").style.display = "block";
+        document.getElementById("joinEvent").style.display = "none"; 
+    }
 
     document.getElementById("title").innerHTML = events[index].eventname; 
     document.getElementById("descrip").innerHTML = events[index].eventdescription;
     document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
+    document.getElementById("privacy").innerHTML = events[index].eventprivacy;
+    
   }
 
   function showEventM(index){
     document.getElementById("content").style.display ="none"; 
     document.getElementById("event").style.display = "block";
      document.getElementById("deletion").style.display = "none";
+    document.getElementById("addFriendsEmail").style.display = "block";
+    document.getElementById("rtj").style.display = "none";
+    document.getElementById("joinEvent").style.display = "none";
+     
      
     document.getElementById("title").innerHTML = events[index].eventname; 
     curEventName = events[index].eventname; 
@@ -208,6 +239,7 @@
     curEventDesc = events[index].eventdescription; 
     document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
     curEventDate = events[index].eventdate; 
+   document.getElementById("privacy").innerHTML = events[index].eventprivacy;
     socket.emit('curEventName', curEventName); 
     socket.emit('curEventDesc', curEventDesc); 
     socket.emit('curEventDate', curEventDate); 
