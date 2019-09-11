@@ -8,7 +8,7 @@ var nodemailer = require('nodemailer');
 var url = "mongodb://localhost:27017/";
 var signInemail, signInpass, signUpemail, signUppass, login;
 var eventName, eventDesc, eventDate, eventPriv;
-var curEventName, curEventDesc, curEventDate;
+var curEventName, curEventDesc, curEventDate, curEventSender;
 var allEvents = [];
 var myEvents = [];
 
@@ -180,6 +180,7 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket) {
     socket.emit('username', signInemail);
     socket.name = signInemail;
+    //curEventSender = "arnavreddy@gmail.com"
     socket.on('curEventDate', function(curEventDate1) {
         curEventDate = curEventDate1;
     })
@@ -188,6 +189,10 @@ io.on('connection', function(socket) {
     })
     socket.on('curEventDesc', function(curEventDesc1) {
         curEventDesc = curEventDesc1;
+    })
+    socket.on('curEventSender', function(curEventSender1) {
+
+        curEventSender = curEventSender1;
     })
 
     socket.on('display', function(username) {
@@ -285,6 +290,7 @@ io.on('connection', function(socket) {
 
     app.get("/addFriends", function(req, res) {
         var email = req.query.friend_email;
+        console.log("Hello " + curEventDate + ", " + email)
         var mailOp = {
             from: 'handlerevent394@gmail.com',
             to: email,
@@ -344,5 +350,47 @@ io.on('connection', function(socket) {
         }
 
     });
+    app.get("/requestToJoinEvent", function(req, res) {
+        var email = curEventSender;
+        console.log("Hi " + curEventDate + ", " + email)
+        var mailOp = {
+            from: 'handlerevent394@gmail.com',
+            to: email,
+            subject: 'Invited to ' + curEventName + ' hosted by ' + socket.name,
+            text: 'Hey there! You have been graciously invited to ' + curEventName + ' by ' + socket.name + ' . It is' +
+                ' ' + curEventDesc + ' and it is being held on ' + curEventDate + '. You see more details at localhost:8081/login.html .'
+
+        };
+
+        transport.sendMail(mailOp, function(error, info) {
+            if (error) {} else {}
+        });
+        res.redirect('/events.html');
+    });
+
+    app.get("/process_editEvent", function(req, res) {
+        var oldEvent = req.query.oldEvent_name;
+        var newEventName = req.query.newEvent_name;
+        var newEventDesc = req.query.newEvent_desc;
+        var newEventDate = req.query.newEvent_date;
+        var newEventPriv;
+        if (req.query.newEvent_privacy === "on") newEventPriv = "private"
+        else newEventPriv = "public"
+
+        MongoClient.connect(url, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("mydb");
+            var myquery = { eventname: oldEvent };
+            var newvalues = { $set: { username: signInemail, eventname: newEventName, eventdate: newEventDate, eventdescription: newEventDesc, eventprivacy: newEventPriv } };
+            dbo.collection("Events").updateOne(myquery, newvalues, function(err, res) {
+                if (err) throw err;
+                console.log("1 document updated");
+                db.close();
+            });
+        });
+
+        res.redirect("/events.html");
+    })
+
 
 })

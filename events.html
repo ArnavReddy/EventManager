@@ -115,7 +115,7 @@
 
                         <div id ="rtj">
                          <form autocomplete="on" action="/requestToJoinEvent" method ="GET">
-                         <input type = "button" value = "Request To Join Event">
+                         <input type = "submit" value = "Request To Join Event">
                          <form>
                          </div>
 
@@ -131,6 +131,19 @@
                             <input type="submit" value ="Add Friend"/>
                         </form>
                         </div>
+                        <div class="col-sm-12 col-md-12 well" id="editEvent">
+                        <form autocomplete="off" class="form-signin" action="/process_editEvent" method="GET">
+                            <h2>Edit event</h2>
+                            <select name = "oldEvent_name" id = "editEventOptions"> 
+                            </select>
+                            <input maxlength = "17" required="required" type="text" placeholder="Event Name" name="newEvent_name" />
+                            <input required="required" type="text" placeholder="Event Description" name="newEvent_desc" />
+                            <input required="required" id="test" placeholder = "Event Date(2019-12-31 )" name ="newEvent_date" type="date">
+                            Event Private <input type = "checkbox" placeholder ="public" name = "newEvent_privacy">
+                            <input onclick = 'updateList()' type="submit" value="Edit Event" />
+                        </form>
+                        
+                    </div>
                     </div>
                 </div>
                 <!-- /.row -->
@@ -144,7 +157,7 @@
              if ( $('#test')[0].type != 'date' ) $('#test').datepicker();
         var events = {}; 
         var count = 0; 
-        var curEventName, curEventDesc, curEventDate;
+        var curEventName, curEventDesc, curEventDate, curEventSender;
         $(function() {
            
             $(".side-nav .collapse").on("hide.bs.collapse", function() {
@@ -200,6 +213,8 @@
         $('#submenu-1').append("<li onclick = 'showEventM(" + count +")'><a><i class='fa fa-fw fa-calendar' color = 'white'></i>" + myevents[i].eventname + "</a></li>");
         count++; 
         $('#deletionEventOptions').append("<option value = '" + myevents[i].eventname +"'>"+ myevents[i].eventname +"</option>");
+                $('#editEventOptions').append("<option value = '" + myevents[i].eventname +"'>"+ myevents[i].eventname +"</option>");
+
 
       }
   })
@@ -221,6 +236,7 @@
     document.getElementById("descrip").innerHTML = events[index].eventdescription;
     document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
     document.getElementById("privacy").innerHTML = events[index].eventprivacy;
+    document.getElementById("editEvent").style.display = "none";
     
   }
 
@@ -231,6 +247,7 @@
     document.getElementById("addFriendsEmail").style.display = "block";
     document.getElementById("rtj").style.display = "none";
     document.getElementById("joinEvent").style.display = "none";
+    document.getElementById("editEvent").style.display = "block";
      
      
     document.getElementById("title").innerHTML = events[index].eventname; 
@@ -238,17 +255,20 @@
     document.getElementById("descrip").innerHTML = events[index].eventdescription;
     curEventDesc = events[index].eventdescription; 
     document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
+    curEventSender = events[index].username;
     curEventDate = events[index].eventdate; 
    document.getElementById("privacy").innerHTML = events[index].eventprivacy;
     socket.emit('curEventName', curEventName); 
     socket.emit('curEventDesc', curEventDesc); 
     socket.emit('curEventDate', curEventDate); 
+    socket.emit('curEventSender', curEventSender); 
   }
 
   function addEvent(){
     document.getElementById("content").style.display ="block"; 
     document.getElementById("event").style.display = "none";
      document.getElementById("deletion").style.display = "none";
+     document.getElementById("editEvent").style.display = "none";
     
   }
 
@@ -256,6 +276,7 @@
     document.getElementById("deletion").style.display ="block"; 
     document.getElementById("content").style.display = "none";
      document.getElementById("event").style.display = "none";
+     document.getElementById("editEvent").style.display = "none";
   }
 
 
