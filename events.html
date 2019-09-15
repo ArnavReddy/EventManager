@@ -1,1 +1,330 @@
+<<<<<<< Updated upstream
 hello world
+=======
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login Page</title>
+    <style></style>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
+    <link rel="stylesheet" href="loginstyles.css" />
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+     <script src="/socket.io/socket.io.js"></script>
+     <script src="https://cdnjs.com/libraries/socket.io" ></script>
+    <link rel="stylesheet" href="eventstyles.css" />
+</head>
+
+<body>
+    <div id="throbber" style="display:none; min-height:120px;"></div>
+    <div id="noty-holder"></div>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <!-- Top Menu Items -->
+            <ul class="nav navbar-right top-nav">
+                <li>
+                    <a  href="#" id="username"> <b class="fa fa-fw fa-user"></b></a>
+                    
+                    <ul class="dropdown-menu"></ul>
+                </li>
+            </ul>
+            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav">
+                    <li>
+                        <a href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-fw fa-calendar"></i> MY EVENTS
+                            <i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                        <ul id="submenu-1" class="collapse">
+                            
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" data-toggle="collapse" data-target="#submenu-2"><i class="fa fa-fw fa-search"></i> FIND EVENTS
+                            <i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                        <ul id="submenu-2" class="collapse">
+        
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" data-toggle="collapse" data-target="#submenu-3"><i class="fa fa-fw fa-user-plus"></i> MANAGE EVENTS
+                            <i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                        <ul id="submenu-3" class="collapse">
+                            <li>
+                                <a onclick ="addEvent()"id="eventInvites" href="#"><i class="fa fa-angle-double-right"></i>
+                                    CREATE EVENTS</a>
+
+                                 <a onclick ="var x = document.getElementById('deletionEventOptions');
+        x.remove(x.selectedIndex); window.location.href = 'events.html'" id="eventInvites" href="#"><i class="fa fa-angle-double-right"></i>
+                                    DELETE EVENTS</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-fw fa-paper-plane-o"></i>
+                            Extras</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="row" id="main">
+                    <div class="col-sm-12 col-md-12 well" id="content">
+                        <form autocomplete="off" class="form-signin" action="/process_addEvent" method="GET">
+                            <h2>Add event</h2>
+                            <input maxlength = "17" required="required" type="text" placeholder="Event Name" name="event_name" />
+                            <input required="required" type="text" placeholder="Event Description" name="event_desc" />
+                            <input required="required" id="test" placeholder = "Event Date(2019-12-31 )" name ="event_date" type="date">
+                            Event Private <input type = "checkbox" placeholder ="public" name = "event_privacy">
+                            <input onclick = 'updateList()' type="submit" value="Add Event" />
+                        </form>
+                        
+                    </div>
+
+                    <div class="col-sm-12 col-md-12 well" id="deletion">
+                        <form autocomplete="off" class="form-signin" action="/process_deleteEvent" method="GET">
+                            <h2>Delete event</h2>
+                            <select name = "deletedEvent" id = "deletionEventOptions"> 
+                            </select>
+                            
+                            <input type="submit" value="Delete Event" />
+                        </form>
+                        
+                    </div>
+
+
+                    <div id ="event" style="display:none">
+                        <h1 id="title">default</h1>
+                        <h2 id ="info">default</h2>
+                        <p id="descrip">default</p>
+                        <p id="privacy">default</p>
+
+                        <div id ="rtj">
+                         <form autocomplete="on" action="/requestToJoinEvent" method ="GET">
+                         <input type = "submit" value = "Request To Join Event">
+                         <form>
+                         </div>
+
+                        <div id ="joinEvent">
+                         <form autocomplete="on" action="/joinEvent" method ="GET">
+                          <input type = "button" value = "Join Event">
+                         <form>
+                         </div>
+                        
+                        <div id ="addFriendsEmail">
+                            <form autocomplete="on" action="/addFriends" method ="GET">
+                                <input id = "testerrr" type = "email" placeholder="friend@email.com" name="friend_email" />
+                                <input type="submit" value ="Add Friend"/>
+                            </form>
+                        </div>
+                        <button id ="editButton"onclick = "showEdit()">Edit Event</button>
+
+                        <div class="col-sm-12 col-md-12 well" id="editEvent" style="display: none">
+                            <form autocomplete="off" class="form-signin" action="/process_editEvent" method="GET">
+                                <h2>Edit event</h2>
+                                <select name = "oldEvent_name" id = "editEventOptions"> 
+                                </select>
+                                <input maxlength = "17" required="required" type="text" placeholder="Event Name" name="newEvent_name" />
+                                <input required="required" type="text" placeholder="Event Description" name="newEvent_desc" />
+                                <input required="required" id="test" placeholder = "Event Date(2019-12-31 )" name ="newEvent_date" type="date">
+                                Event Private <input type = "checkbox" placeholder ="public" name = "newEvent_privacy">
+                                <input onclick = 'updateList()' type="submit" value="Edit Event" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+    <script>
+          var check = false; 
+
+             if ( $('#test')[0].type != 'date' ) $('#test').datepicker();
+        var events = {}; 
+        var count = 0; 
+        var curEventName, curEventDesc, curEventDate, curEventSender;
+        $(function() {
+           
+            $(".side-nav .collapse").on("hide.bs.collapse", function() {
+                $(this)
+                    .prev()
+                    .find(".fa")
+                    .eq(1)
+                    .removeClass("fa-angle-right")
+                    .addClass("fa-angle-down");
+            });
+            $(".side-nav .collapse").on("show.bs.collapse", function() {
+                $(this)
+                    .prev()
+                    .find(".fa")
+                    .eq(1)
+                    .removeClass("fa-angle-down")
+                    .addClass("fa-angle-right");
+            });
+        });
+
+        
+            
+            var socket = io.connect();
+            socket.emit('display', "1");  
+            
+  socket.on('username', function (username) {
+        document.getElementById("username").innerHTML =username;
+  });
+  
+  socket.on('allevents', function(allevents) {
+
+      for(i=0; i<allevents.length;i++){
+          //allevents[i] = allevents[i].replace(/^"(.*)"$/, '$1');
+          if(allevents[i] == null) continue; 
+          events[count] = allevents[i];
+       $('#submenu-2').append("<li  onclick = 'showEvent(" + count +")'><a><i class='fa fa-fw fa-search' color='white'>"+ allevents[i].eventname +"</i></a></li>");
+        count++; 
+       
+
+    }
+  })
+
+  socket.on('myevents', function(myevents) {
+
+      if(myevents.length ===0)
+      {
+          document.getElementById("deletionEventOptions").placeholder = "None";
+      }
+      else{
+          document.getElementById("deletionEventOptions").placeholder = "Select";
+      }
+      for(i=0; i<myevents.length;i++){
+          //myevents[i] = myevents[i].replace(/^"(.*)"$/, '$1');
+          events[count] = myevents[i]; 
+            console.log(myevents[i].eventname); 
+        $('#submenu-1').append("<li onclick = 'showEventM(" + count +")'><a><i class='fa fa-fw fa-calendar' color = 'white'></i>" + myevents[i].eventname + "</a></li>");
+        count++; 
+        $('#deletionEventOptions').append("<option value = '" + myevents[i].eventname +"'>"+ myevents[i].eventname +"</option>");
+                $('#editEventOptions').append("<option value = '" + myevents[i].eventname +"'>"+ myevents[i].eventname +"</option>");
+
+
+      }
+  })
+
+
+  function showEdit(){
+      console.log(check); 
+      if(!check) {
+          document.getElementById("editButton").innerHTML = "You cannot edit this event";
+          return; 
+      }
+    document.getElementById("editEvent").style.display = "block"; 
+    document.getElementById("editButton").style.display ="none"; 
+  }
+  function showEvent(index){
+      check = false; 
+    document.getElementById("content").style.display ="none"; 
+    document.getElementById("deletion").style.display = "none"; 
+    document.getElementById("event").style.display = "block";
+    document.getElementById("addFriendsEmail").style.display = "none";
+    if(events[index].eventprivacy === "public") {
+         document.getElementById("rtj").style.display = "none";
+          document.getElementById("joinEvent").style.display = "block";
+    }
+    if(events[index].eventprivacy === "private") {
+        document.getElementById("rtj").style.display = "block";
+        document.getElementById("joinEvent").style.display = "none"; 
+    }
+
+    document.getElementById("title").innerHTML = events[index].eventname; 
+    document.getElementById("descrip").innerHTML = events[index].eventdescription;
+    document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
+    document.getElementById("privacy").innerHTML = events[index].eventprivacy;
+    document.getElementById("editEvent").style.display = "none";
+    
+  }
+
+  function showEventM(index){
+      check = true; 
+    document.getElementById("content").style.display ="none"; 
+    document.getElementById("event").style.display = "block";
+     document.getElementById("deletion").style.display = "none";
+    document.getElementById("addFriendsEmail").style.display = "block";
+    document.getElementById("rtj").style.display = "none";
+    document.getElementById("joinEvent").style.display = "none";
+    document.getElementById("editEvent").style.display = "none";
+     
+     
+    document.getElementById("title").innerHTML = events[index].eventname; 
+    curEventName = events[index].eventname; 
+    document.getElementById("descrip").innerHTML = events[index].eventdescription;
+    curEventDesc = events[index].eventdescription; 
+    document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
+    curEventSender = events[index].username;
+    curEventDate = events[index].eventdate; 
+   document.getElementById("privacy").innerHTML = events[index].eventprivacy;
+    socket.emit('curEventName', curEventName); 
+    socket.emit('curEventDesc', curEventDesc); 
+    socket.emit('curEventDate', curEventDate); 
+    socket.emit('curEventSender', curEventSender); 
+  }
+
+  function addEvent(){
+    document.getElementById("content").style.display ="block"; 
+    document.getElementById("event").style.display = "none";
+     document.getElementById("deletion").style.display = "none";
+     document.getElementById("editEvent").style.display = "none";
+    
+  }
+
+   function deleteEvent(){
+    document.getElementById("deletion").style.display ="block"; 
+    document.getElementById("content").style.display = "none";
+     document.getElementById("event").style.display = "none";
+     document.getElementById("editEvent").style.display = "none";
+  }
+
+
+   if (performance.navigation.type == 1) {
+    console.log( "This page is reloaded" );
+    window.location.href="login.html";
+  } else {
+    console.log( "This page is not reloaded");
+  }
+socket.on('updateSelectList', function(obj){
+    console.log("YOLOOLOLLOO " + obj)
+     var x = document.getElementById("deletionEventOptions");
+        x.remove(x.selectedIndex);
+        alert("changed")
+        alert("hello");
+})
+function updateList()
+{
+
+}
+
+
+        
+
+    </script>
+</body>
+
+</html>
+>>>>>>> Stashed changes
