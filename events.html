@@ -95,7 +95,7 @@
                         
                     </div>
 
-   <div class="col-sm-12 col-md-12 well" id="deletion">
+                    <div class="col-sm-12 col-md-12 well" id="deletion" style="display: none">
                         <form autocomplete="off" class="form-signin" action="/process_deleteEvent" method="GET">
                             <h2>Delete event</h2>
                             <select name = "deletedEvent" id = "deletionEventOptions"> 
@@ -120,30 +120,31 @@
                          </div>
 
                         <div id ="joinEvent">
-                         <form autocomplete="on" action="/joinEvent" method ="GET">
-                          <input type = "button" value = "Join Event">
-                         <form>
+                            <form autocomplete="on" action="/joinEvent" method ="GET">
+                            <input type = "button" value = "Join Event">
+                            <form>
                          </div>
                         
                         <div id ="addFriendsEmail">
-                        <form autocomplete="on" action="/addFriends" method ="GET">
-                            <input id = "testerrr" type = "email" placeholder="friend@email.com" name="friend_email" />
-                            <input type="submit" value ="Add Friend"/>
-                        </form>
+                            <form autocomplete="on" action="/addFriends" method ="GET">
+                                <input id = "testerrr" type = "email" placeholder="friend@email.com" name="friend_email" />
+                                <input type="submit" value ="Add Friend"/>
+                            </form>
                         </div>
-                        <div class="col-sm-12 col-md-12 well" id="editEvent">
-                        <form autocomplete="off" class="form-signin" action="/process_editEvent" method="GET">
-                            <h2>Edit event</h2>
-                            <select name = "oldEvent_name" id = "editEventOptions"> 
-                            </select>
-                            <input maxlength = "17" required="required" type="text" placeholder="Event Name" name="newEvent_name" />
-                            <input required="required" type="text" placeholder="Event Description" name="newEvent_desc" />
-                            <input required="required" id="test" placeholder = "Event Date(2019-12-31 )" name ="newEvent_date" type="date">
-                            Event Private <input type = "checkbox" placeholder ="public" name = "newEvent_privacy">
-                            <input onclick = 'updateList()' type="submit" value="Edit Event" />
-                        </form>
-                        
-                    </div>
+
+                        <button id="editBut" onclick ="showEdit()">Edit Event</button>
+                        <div class="col-sm-12 col-md-12 well" id="editEvent" style="display: none">
+                            <form autocomplete="off" class="form-signin" action="/process_editEvent" method="GET">
+                                <h2>Edit event</h2>
+                                <select name = "oldEvent_name" id = "editEventOptions"> 
+                                </select>
+                                <input maxlength = "17" required="required" type="text" placeholder="Event Name" name="newEvent_name" />
+                                <input required="required" type="text" placeholder="Event Description" name="newEvent_desc" />
+                                <input required="required" id="test" placeholder = "Event Date(2019-12-31 )" name ="newEvent_date" type="date">
+                                Event Private <input type = "checkbox" placeholder ="public" name = "newEvent_privacy">
+                                <input onclick = 'updateList()' type="submit" value="Edit Event" />
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <!-- /.row -->
@@ -191,6 +192,7 @@
       for(i=0; i<allevents.length;i++){
           //allevents[i] = allevents[i].replace(/^"(.*)"$/, '$1');
           events[count] = allevents[i];
+          console.log("all:" + allevents[i].eventname);
       $('#submenu-2').append("<li  onclick = 'showEvent(" + count +")'><a><i class='fa fa-fw fa-search' color='white'>"+ allevents[i].eventname +"</i></a></li>");
         count++; 
 
@@ -209,15 +211,19 @@
       for(i=0; i<myevents.length;i++){
           //myevents[i] = myevents[i].replace(/^"(.*)"$/, '$1');
           events[count] = myevents[i]; 
-
+            console.log("my:" + myevents[i].eventname);
         $('#submenu-1').append("<li onclick = 'showEventM(" + count +")'><a><i class='fa fa-fw fa-calendar' color = 'white'></i>" + myevents[i].eventname + "</a></li>");
         count++; 
         $('#deletionEventOptions').append("<option value = '" + myevents[i].eventname +"'>"+ myevents[i].eventname +"</option>");
-                $('#editEventOptions').append("<option value = '" + myevents[i].eventname +"'>"+ myevents[i].eventname +"</option>");
+        $('#editEventOptions').append("<option value = '" + myevents[i].eventname +"'>"+ myevents[i].eventname +"</option>");
 
 
       }
-  })
+  });
+
+  function showEdit(){
+        document.getElementById("editEvent").style.display = "block";
+  }
 
   function showEvent(index){
     document.getElementById("content").style.display ="none"; 
@@ -236,7 +242,8 @@
     document.getElementById("descrip").innerHTML = events[index].eventdescription;
     document.getElementById("info").innerHTML = "hosted by "  + events[index].username; // + " on " + event[index].eventdate;
     document.getElementById("privacy").innerHTML = events[index].eventprivacy;
-    document.getElementById("editEvent").style.display = "none";
+    document.getElementById("editEvent").style.display = "none"; 
+    document.getElementById("editBut").style.display ="none"; 
     
   }
 
@@ -246,8 +253,7 @@
      document.getElementById("deletion").style.display = "none";
     document.getElementById("addFriendsEmail").style.display = "block";
     document.getElementById("rtj").style.display = "none";
-    document.getElementById("joinEvent").style.display = "none";
-    document.getElementById("editEvent").style.display = "block";
+    document.getElementById("editBut").style.display = "block"; 
      
      
     document.getElementById("title").innerHTML = events[index].eventname; 

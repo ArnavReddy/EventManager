@@ -205,7 +205,11 @@ io.on('connection', function(socket) {
                     if (err) throw err;
                     for (var i = 0; i < result.length; i++) {
 
-                        if (result[i].username != socket.name && result[i].username != null) allEvents[i] = result[i];
+                        console.log(socket.name + " " + result[i].eventname + " all");
+                        if (result[i].username != socket.name && result[i].username != null){
+                            
+                            allEvents.push(result[i]);
+                        } 
 
 
 
@@ -233,8 +237,9 @@ io.on('connection', function(socket) {
                 .toArray(function(err, result2) {
                     if (err) throw err;
                     for (var i = 0; i < result2.length; i++) {
-
-                        myEvents[i] = result2[i];
+                        
+                        console.log(result2[i].username + " " + socket.name + " my "); 
+                        if(result2[i].username == socket.name) myEvents.push(result2[i]);
 
 
 
